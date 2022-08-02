@@ -7,15 +7,13 @@ import javax.persistence.Id;
 
 import lombok.Data;
 
-@Data
 @Entity
+@Data
 public class Brand {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private String brandName;
-	private int yearEstablished;
-	private boolean trusted = true;
+	private String name;
 	
 }

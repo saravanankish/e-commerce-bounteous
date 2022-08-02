@@ -1,25 +1,23 @@
 package com.saravanank.ecommerce.resourceserver.model;
 
-import javax.persistence.CascadeType;
+import java.util.List;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import lombok.Data;
 
 @Entity
 @Data
-public class SubCategory {
+public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private String Name;
+	private String name;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "category")
-	private SubCategory category;
+	@ElementCollection
+	private List<String> subCategory;
 }

@@ -1,9 +1,9 @@
 package com.saravanank.ecommerce.resourceserver.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends PagingAndSortingRepository<Product, Integer> {
 
 }

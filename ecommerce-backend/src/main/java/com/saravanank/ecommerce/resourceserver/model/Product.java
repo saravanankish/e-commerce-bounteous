@@ -3,12 +3,11 @@ package com.saravanank.ecommerce.resourceserver.model;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
@@ -28,22 +27,15 @@ public class Product {
 	private String description;
 	private double price;
 	private int quantity;
+	private float rating;
+	private String thumbnail;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "thumbnail")
-	private Image thumbnail;
+	@ElementCollection
+	private List<String> images;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "image_url")
-	private List<Image> images;
-	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "brand")
+	@OneToOne(cascade = CascadeType.MERGE)
 	private Brand brand;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "category")
-	private SubCategory category;
-	
+	private String category;
 	
 }

@@ -22,4 +22,10 @@ public class BrandService {
 		return brandRepo.saveAll(brands);
 	}
 	
+	public List<Brand> getAllBrands() {
+		return brandRepo.findAll();
+	}
+	
+	
+	
 }

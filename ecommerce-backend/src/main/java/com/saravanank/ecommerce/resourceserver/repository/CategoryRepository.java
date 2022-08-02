@@ -2,8 +2,8 @@ package com.saravanank.ecommerce.resourceserver.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.saravanank.ecommerce.resourceserver.model.SubCategory;
+import com.saravanank.ecommerce.resourceserver.model.Category;
 
-public interface SubCategoryRepository extends JpaRepository<SubCategory, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
 }
