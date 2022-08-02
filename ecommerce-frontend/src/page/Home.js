@@ -30,11 +30,11 @@ const Home = () => {
     }, [searchParam.get("logout")])
 
     return (
-        <div>
+        <div style={{ marginBottom: "20px" }}>
             {/* <Navbar showAuth={!loggedIn} /> */}
             <Grid container spacing={2}>
                 {
-                    <ProductView products={[]} loggedIn size={loggedIn ? 9.5 : 12} />
+                    <ProductView loggedIn={loggedIn} size={loggedIn ? 10 : 12} />
                 }
             </Grid>
         </div>
