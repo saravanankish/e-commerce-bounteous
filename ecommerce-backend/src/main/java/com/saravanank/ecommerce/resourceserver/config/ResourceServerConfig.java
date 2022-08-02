@@ -3,11 +3,16 @@ package com.saravanank.ecommerce.resourceserver.config;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -18,9 +23,13 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.saravanank.ecommerce.resourceserver.service.UserService;
 
+import lombok.AllArgsConstructor;
+
+@Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ResourceServerConfig extends GlobalMethodSecurityConfiguration {
+public class ResourceServerConfig {
 
 	@Autowired
 	private UserService userService;
@@ -36,32 +45,40 @@ public class ResourceServerConfig extends GlobalMethodSecurityConfiguration {
 				cc.setAllowedMethods(Arrays.asList("*"));
 				return cc;
 			};
-
 			c.configurationSource(source);
 		});
-		http.authorizeRequests().anyRequest().authenticated().and()
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()));
+		http.csrf().disable().authorizeRequests(auth -> auth.antMatchers(HttpMethod.GET, "/**/products").permitAll().anyRequest().authenticated())
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()))
+				.exceptionHandling(
+						exceptions -> exceptions.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+								.accessDeniedHandler(new CustomAccessDeniedHandler()));
 		return http.build();
 	}
-	
+//
+//	@Bean
+//	@Order(Ordered.HIGHEST_PRECEDENCE)
+//	WebSecurityCustomizer webSecurity() throws Exception {
+//		return web -> web.ignoring().antMatchers(HttpMethod.GET, "/**/products");
+//	}
+
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
-	    JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-	    jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("role");
-	    jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-	    
-	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-	    return jwtAuthenticationConverter;
-	  }
+		JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+		jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+		return jwtAuthenticationConverter;
+	}
 
 	@Autowired
 	public void bindAuthenticationBuilder(AuthenticationManagerBuilder builder) throws Exception {
 		builder.userDetailsService(userService);
 	}
-	
+
 	@Bean
 	JwtDecoder jwtDecoder() {
-	    return JwtDecoders.fromIssuerLocation("http://auth-server:9000");
+		return JwtDecoders.fromIssuerLocation("http://auth-server:9000");
 	}
 
 }
