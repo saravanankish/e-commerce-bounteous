@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Buffer } from "buffer";
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { login } from '../util/loginSlice';
+import { login } from '../redux/loginSlice';
 import { authUrl, backendUrl } from '../config';
 
 const LoginButton = ({ refresh, ...rest }) => {
@@ -38,6 +38,7 @@ const LoginButton = ({ refresh, ...rest }) => {
                     axios.get(`${backendUrl}/user`, { headers: { "Authorization": "Bearer " + token.access_token } }).then(data => {
                         if (data.data.userId) {
                             token.username = data.data.username;
+                            token.received = new Date();
                             token.role = data.data.role;
                             sessionStorage.setItem("token", JSON.stringify(token))
                             navigate("/")

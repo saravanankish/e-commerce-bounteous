@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux';
 
 const Page = () => {
 
-    const loggedIn = useSelector(state => state.loggedIn)
+    const loggedIn = useSelector(state => state.login.loggedIn)
 
     return (
         <>
             <Navbar showAuth={!loggedIn} />
-            <div style={{ marginTop: '60px' }}>
+            <div style={{ marginTop: '45px' }}>
                 <Outlet />
             </div>
         </>

@@ -19,7 +19,7 @@ const Navbar = ({ showAuth }) => {
 
     return (
         <AppBar position="fixed">
-            <Toolbar>
+            <Toolbar variant="dense">
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     {process.env.REACT_APP_APPLICATION_NAME}
                 </Typography>
@@ -30,7 +30,7 @@ const Navbar = ({ showAuth }) => {
                             <Button variant="contained" color="warning" onClick={() => navigate("/register")}>Register</Button>
                         </>
                         :
-                        <LogoutButton variant="contained" color="error" onClick={popup} />
+                        <LogoutButton variant="contained" color="error" style={{ height: "30px" }} onClick={popup} />
                 }
             </Toolbar>
         </AppBar>

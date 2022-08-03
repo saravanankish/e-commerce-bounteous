@@ -1,17 +1,18 @@
-import Navbar from "../component/Navbar";
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { loggout } from '../util/loginSlice';
+import { loggout } from '../redux/loginSlice';
 import ProductView from "../component/ProductView";
-import { Grid } from "@mui/material";
-
+import { Grid, setRef } from "@mui/material";
+import Cart from "../component/Cart";
+import fetchCart from '../util/fetchCart';
 
 const Home = () => {
     const [searchParam,] = useSearchParams();
     const dispatch = useDispatch();
-    const loggedIn = useSelector(state => state.loggedIn)
+    const loggedIn = useSelector(state => state.login.loggedIn)
+    const [refreshCart, setRefreshCart] = useState(false);
 
     const logoutSuccess = () => {
         sessionStorage.removeItem("token")
@@ -30,11 +31,15 @@ const Home = () => {
     }, [searchParam.get("logout")])
 
     return (
-        <div style={{ marginBottom: "20px" }}>
+        <div style={{ paddingBottom: "20px", backgroundColor: "cornsilk" }}>
             {/* <Navbar showAuth={!loggedIn} /> */}
-            <Grid container spacing={2}>
+            <Grid container >
+                <ProductView setRefreshCart={setRefreshCart} loggedIn={loggedIn} size={loggedIn ? 9.5 : 12} />
                 {
-                    <ProductView loggedIn={loggedIn} size={loggedIn ? 10 : 12} />
+                    loggedIn &&
+                    <Grid item xs={2.5}>
+                        <Cart refreshCart={refreshCart} />
+                    </Grid>
                 }
             </Grid>
         </div>

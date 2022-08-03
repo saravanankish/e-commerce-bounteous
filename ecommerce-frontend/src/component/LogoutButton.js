@@ -2,7 +2,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { loggout } from '../util/loginSlice';
+import { loggout } from '../redux/loginSlice';
 import { authUrl } from '../config';
 
 const LogoutButton = ({ refresh, ...rest }) => {
@@ -34,7 +34,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
     }
     return (
         <>
-            <Button {...rest} onClick={popup} >Logout</Button>
+            <Button {...rest} onClick={popup}>Logout</Button>
         </>
     )
 }

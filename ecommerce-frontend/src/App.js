@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './page/Home';
 import Register from './page/Register';
-import store from './util/store';
+import store from './redux/store';
 import Page from './page/Page';
 import { Provider } from 'react-redux'
 

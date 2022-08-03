@@ -7,7 +7,7 @@ import EastIcon from '@mui/icons-material/East';
 import ProductCard from "./ProductCard";
 import { backendUrl } from "../config";
 
-const ProductView = ({ loggedIn, size }) => {
+const ProductView = ({ loggedIn, size, setRefreshCart }) => {
 
     const [products, setProducts] = useState([]);
     const [page, setPage] = useState(0);
@@ -32,11 +32,11 @@ const ProductView = ({ loggedIn, size }) => {
                 {
                     products.map((product, index) => (
                         <Grid item xs={6} md={3} key={index}>
-                            <ProductCard product={product} />
+                            <ProductCard setRefreshCart={setRefreshCart} product={product} />
                         </Grid>
                     ))
                 }
-                <Grid xs={12} item style={{ display: 'flex', justifyContent: "center" }}>
+                <Grid xs={12} item style={{ display: 'flex', justifyContent: "center", marginTop: "10px" }}>
                     <div style={{ display: "flex" }}>
                         <Button
                             style={{ backgroundColor: "gainsboro" }}
@@ -54,7 +54,8 @@ const ProductView = ({ loggedIn, size }) => {
                                 border: "1px solid",
                                 textAlign: "center",
                                 lineHeight: 2,
-                                borderRadius: 4
+                                borderRadius: 4,
+                                backgroundColor: "white"
                             }}
                         >
                             {page + 1}

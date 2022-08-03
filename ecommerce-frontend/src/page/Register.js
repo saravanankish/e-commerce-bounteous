@@ -15,7 +15,7 @@ import { backendUrl } from '../config';
 
 const Register = () => {
 
-    const loggedIn = useSelector(state => state.loggedIn)
+    const loggedIn = useSelector(state => state.login.loggedIn)
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

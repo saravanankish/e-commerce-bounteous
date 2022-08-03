@@ -13,5 +13,11 @@ code {
 }
 
 ::-webkit-scrollbar {
-  width: "7px";
+  width: 7px;
+  background-color: cornsilk;
+}
+
+::-webkit-scrollbar-thumb {
+  background: dodgerblue;
+  border-radius: 10px;
 }

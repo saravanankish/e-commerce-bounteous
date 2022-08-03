@@ -7,10 +7,18 @@ import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { AddShoppingCartOutlined } from "@mui/icons-material";
+import { backendUrl } from '../config';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import getToken from '../util/tokenGetter';
+import fetchCart from '../util/fetchCart';
+import addToCart from '../util/addToCart';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, setRefreshCart }) => {
 
-    const [mouseOver, setMouseOver] = useState()
+    const [mouseOver, setMouseOver] = useState();
+    const dispatch = useDispatch();
+    const cart = useSelector(state => state.cart.cart);
 
     return (
         <Card
@@ -21,7 +29,8 @@ const ProductCard = ({ product }) => {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between"
+                justifyContent: "space-between",
+                cursor: "pointer"
             }}
         >
             <CardMedia
@@ -60,6 +69,7 @@ const ProductCard = ({ product }) => {
                     fullWidth
                     variant="contained"
                     endIcon={<AddShoppingCartOutlined />}
+                    onClick={() => addToCart(product, cart, 1, dispatch)}
                 >
                     ADD TO CART
                 </Button>
