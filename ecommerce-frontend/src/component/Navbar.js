@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import LoginButton from './LoginButton';
 import LogoutButton from './LogoutButton';
 import { useNavigate } from 'react-router-dom';
+import { authUrl } from '../config';
 
 
 const Navbar = ({ showAuth }) => {
@@ -12,7 +13,7 @@ const Navbar = ({ showAuth }) => {
     const navigate = useNavigate();
 
     const popup = () => {
-        window.open('http://localhost:9000/logout', 'popup', 'width=300,height=350');
+        window.open(`${authUrl}/logout`, 'popup', 'width=300,height=350');
         return false;
     }
 

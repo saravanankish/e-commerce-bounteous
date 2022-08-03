@@ -5,6 +5,7 @@ import { Buffer } from "buffer";
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { login } from '../util/loginSlice';
+import { authUrl, backendUrl } from '../config';
 
 const LoginButton = ({ refresh, ...rest }) => {
 
@@ -31,10 +32,10 @@ const LoginButton = ({ refresh, ...rest }) => {
 
     useEffect(() => {
         if (code !== '') {
-            axios.post(`http://127.0.0.1:9000/oauth2/token?client_id=e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V&redirect_uri=http://127.0.0.1:3000/&grant_type=authorization_code&code=${code}&code_verifier=qPsH306-ZDDaOE8DFzVn05TkN3ZZoVmI_6x4LsVglQI&scope=e-commerce`, {}, { headers: { "Authorization": "Basic " + Buffer.from("e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V:4McYM0hb0POnrliYCCAhhQC77fMuPgEL").toString("base64"), "Access-Control-Allow-Origin": "*" } }).then(res => {
+            axios.post(`${authUrl}/oauth2/token?client_id=e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V&redirect_uri=http://127.0.0.1:3000/&grant_type=authorization_code&code=${code}&code_verifier=qPsH306-ZDDaOE8DFzVn05TkN3ZZoVmI_6x4LsVglQI&scope=e-commerce`, {}, { headers: { "Authorization": "Basic " + Buffer.from("e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V:4McYM0hb0POnrliYCCAhhQC77fMuPgEL").toString("base64"), "Access-Control-Allow-Origin": "*" } }).then(res => {
                 if (res.data.access_token) {
                     var token = res.data;
-                    axios.get("http://localhost:8080/api/v1/user", { headers: { "Authorization": "Bearer " + token.access_token } }).then(data => {
+                    axios.get(`${backendUrl}/user`, { headers: { "Authorization": "Bearer " + token.access_token } }).then(data => {
                         if (data.data.userId) {
                             token.username = data.data.username;
                             token.role = data.data.role;
@@ -50,7 +51,7 @@ const LoginButton = ({ refresh, ...rest }) => {
     }, [code])
 
     const popup = () => {
-        window.open('http://localhost:9000/oauth2/authorize?response_type=code&client_id=e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V&scope=e-commerce&redirect_uri=http://127.0.0.1:3000/&code_challenge=QYPAZ5NU8yvtlQ9erXrUYR-T5AGCjCF47vN-KsaI2A8&code_challenge_method=S256', 'popup', 'width=300,height=350');
+        window.open(`${authUrl}/oauth2/authorize?response_type=code&client_id=e-commerce-site.TJQfmiEHV1ibmQ2nz0BsZ9Td44I1SZ5V&scope=e-commerce&redirect_uri=http://127.0.0.1:3000/&code_challenge=QYPAZ5NU8yvtlQ9erXrUYR-T5AGCjCF47vN-KsaI2A8&code_challenge_method=S256`, 'popup', 'width=300,height=350');
         return false;
     }
 

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { loggout } from '../util/loginSlice';
+import { authUrl } from '../config';
 
 const LogoutButton = ({ refresh, ...rest }) => {
 
@@ -28,7 +29,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
     }, [searchParam.get("logout")])
 
     const popup = () => {
-        window.open('http://localhost:9000/logout', 'popup', 'width=300,height=350');
+        window.open(`${authUrl}/logout`, 'popup', 'width=300,height=350');
         return false;
     }
     return (

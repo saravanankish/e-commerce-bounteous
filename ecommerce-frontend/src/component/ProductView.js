@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
 import ProductCard from "./ProductCard";
+import { backendUrl } from "../config";
 
 const ProductView = ({ loggedIn, size }) => {
 
@@ -12,7 +13,7 @@ const ProductView = ({ loggedIn, size }) => {
     const [page, setPage] = useState(0);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/v1/products?page=${page}`).then(res => {
+        axios.get(`${backendUrl}/products?page=${page}`).then(res => {
             if (res.data.length) {
                 setProducts(res.data);
             }

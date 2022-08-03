@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { backendUrl } from '../config';
 
 const Register = () => {
 
@@ -93,7 +94,7 @@ const Register = () => {
                 role: "USER",
                 email
             }
-            axios.post("http://localhost:9000/auth/register", data).then(res => {
+            axios.post(`${backendUrl}/user/register`, data).then(res => {
                 if (res.data.userId) {
                     alert("Registered successfully")
                     navigate("/")
