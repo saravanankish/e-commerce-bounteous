@@ -44,11 +44,6 @@ public class UserService implements UserDetailsService {
 		}
 		return authorities;
 	}
-
-	public User addUser(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		return userRepo.save(user);
-	}
 	
 	public User findByUsername(String username) {
 		return userRepo.findByUsername(username);

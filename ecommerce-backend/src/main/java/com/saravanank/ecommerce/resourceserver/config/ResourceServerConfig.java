@@ -47,7 +47,9 @@ public class ResourceServerConfig {
 			};
 			c.configurationSource(source);
 		});
-		http.csrf().disable().authorizeRequests(auth -> auth.antMatchers(HttpMethod.GET, "/**/products").permitAll().anyRequest().authenticated())
+		http.csrf().disable()
+				.authorizeRequests(auth -> auth.antMatchers(HttpMethod.GET, "/**/products").permitAll()
+						.antMatchers(HttpMethod.POST, "/**/register").permitAll().anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()))
 				.exceptionHandling(
 						exceptions -> exceptions.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
