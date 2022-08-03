@@ -22,9 +22,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
 	@GetMapping
 	public ResponseEntity<User> getUserData(Principal principal) {
 		return new ResponseEntity<User>(userService.getUserByUsername(principal.getName()), HttpStatus.OK);
@@ -32,7 +29,6 @@ public class UserController {
 
 	@PostMapping("/register")
 	public User registerUser(@RequestBody User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userService.addUser(user);
 	}
 }

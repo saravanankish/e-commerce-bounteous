@@ -7,7 +7,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -38,11 +37,6 @@ public class DefaultSecurityConfig {
 			c.configurationSource(source);
 		});
 		return http.build();
-	}
-
-	@Bean
-	WebSecurityCustomizer webSecurity() throws Exception {
-		return web -> web.ignoring().antMatchers("/auth/register");
 	}
 
 	@Autowired

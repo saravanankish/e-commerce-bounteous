@@ -18,11 +18,11 @@ public class Cart {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "products_cart")
-	private List<Product> products;
+	private List<ProductQuantityMapper> products;
 	
 	private double value;
 }

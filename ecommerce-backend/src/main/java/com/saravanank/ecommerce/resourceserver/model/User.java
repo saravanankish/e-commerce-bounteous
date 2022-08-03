@@ -23,14 +23,14 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	private long userId;
 	private String name;
 	private String email;
 	private String username;
 	private String password;
 	private String role;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "cart")
 	private Cart cart;
 

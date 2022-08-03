@@ -4,6 +4,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
 
-public interface ProductRepository extends PagingAndSortingRepository<Product, Integer> {
+public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
 
 }
