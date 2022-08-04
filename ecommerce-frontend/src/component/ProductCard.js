@@ -9,12 +9,14 @@ import Typography from '@mui/material/Typography';
 import { AddShoppingCartOutlined } from "@mui/icons-material";
 import { useSelector, useDispatch } from 'react-redux';
 import addToCart from '../util/addToCart';
+import { useSnackbar } from 'notistack';
 
 const ProductCard = ({ product, setRefreshCart }) => {
 
     const [mouseOver, setMouseOver] = useState();
     const dispatch = useDispatch();
     const cart = useSelector(state => state.cart.cart);
+    const { enqueueSnackbar } = useSnackbar();
 
     return (
         <Card
@@ -65,7 +67,7 @@ const ProductCard = ({ product, setRefreshCart }) => {
                     fullWidth
                     variant="contained"
                     endIcon={<AddShoppingCartOutlined />}
-                    onClick={() => addToCart(product, cart, 1, dispatch)}
+                    onClick={() => addToCart(product, cart, 1, dispatch, enqueueSnackbar)}
                 >
                     ADD TO CART
                 </Button>

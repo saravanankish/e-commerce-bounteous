@@ -9,6 +9,7 @@ import "./cart.css";
 import { useSelector, useDispatch } from "react-redux";
 import fetchCart from "../util/fetchCart";
 import addToCart from "../util/addToCart";
+import { useSnackbar } from 'notistack';
 
 const ItemQuantity = ({
     value,
@@ -16,6 +17,7 @@ const ItemQuantity = ({
     cart,
     dispatch
 }) => {
+    const { enqueueSnackbar } = useSnackbar();
     if (isReadOnly) {
         return (
             <Box padding="0.5rem" fontWeight="500">
@@ -26,13 +28,13 @@ const ItemQuantity = ({
 
     return (
         <Stack direction="row" alignItems="center">
-            <IconButton size="small" color="primary" onClick={() => addToCart(value.product, cart, value.quantity - 1, dispatch, true)}>
+            <IconButton size="small" color="primary" onClick={() => addToCart(value.product, cart, value.quantity - 1, dispatch, enqueueSnackbar, true)}>
                 <RemoveOutlined />
             </IconButton>
             <Box padding="0.5rem" data-testid="item-qty">
                 {value?.quantity}
             </Box>
-            <IconButton size="small" color="primary" onClick={() => addToCart(value.product, cart, value.quantity + 1, dispatch, true)}>
+            <IconButton size="small" color="primary" onClick={() => addToCart(value.product, cart, value.quantity + 1, dispatch, enqueueSnackbar, true)}>
                 <AddOutlined />
             </IconButton>
         </Stack>
@@ -45,6 +47,7 @@ const Cart = () => {
     const dispatch = useDispatch();
     const [cartValue, setCartValue] = useState(0);
 
+
     useEffect(() => {
         fetchCart(dispatch)
         // eslint-disable-next-line
@@ -53,6 +56,7 @@ const Cart = () => {
     useEffect(() => {
         if (cart.products.length > 0)
             getCartValue()
+        // eslint-disable-next-line
     }, [cart])
 
     const getCartValue = () => {
@@ -65,7 +69,7 @@ const Cart = () => {
 
     if (!cart.products?.length) {
         return (
-            <Box className="cart empty" sx={{ mt: 1 }}>
+            <Box className="cart empty">
                 <ShoppingCartOutlined className="empty-cart-icon" />
                 <Box color="#aaa" textAlign="center">
                     Cart is empty. Add more items to the cart to checkout.
@@ -79,7 +83,7 @@ const Cart = () => {
             <Typography variant="h5" color="primary" sx={{ pl: "1rem", pt: "1rem", fontWeight: 700 }}>Cart</Typography>
             {
                 cart.products.map(item => (
-                    <Box display="flex" alignItems="flex-start" padding="1rem" key={item?._id}>
+                    <Box display="flex" alignItems="flex-start" padding="1rem" key={item.id}>
                         <Grid container spacing={1}>
                             <Grid item xs={5}>
                                 <Box className="image-container">
@@ -131,7 +135,7 @@ const Cart = () => {
                     alignSelf="center"
                     data-testid="cart-total"
                 >
-                    {cartValue}
+                    ₹ {cartValue}
                 </Box>
             </Box>
 

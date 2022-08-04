@@ -1,22 +1,18 @@
-import Navbar from "../component/Navbar";
+import AdminNavbar from "../component/AdminNavbar";
 import { Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Footer from '../component/Footer';
 
-const Page = () => {
-
-    const loggedIn = useSelector(state => state.login.loggedIn)
+const AdminPage = () => {
 
     return (
         <>
-            <Navbar showAuth={!loggedIn} />
+            <AdminNavbar />
             <div style={{ marginTop: '45px' }}>
                 <Outlet />
             </div>
             <Footer />
         </>
     )
-
 }
 
-export default Page;
+export default AdminPage;

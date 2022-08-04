@@ -3,17 +3,18 @@ import axios from 'axios';
 import getToken from '../util/tokenGetter';
 import fetchCart from '../util/fetchCart';
 
-const addToCart = async (product, cart, quantity, dispatch, existingProduct) => {
+
+const addToCart = async (product, cart, quantity, dispatch, enqueueSnackbar, existingProduct) => {
 
     if (!sessionStorage.getItem("token")) {
-        alert("Log in to add to cart")
+        enqueueSnackbar("Login to add products to cart", { variant: "warning" })
         return
     }
 
     if (cart?.products?.length) {
         var productPresent = cart.products.filter(prod => prod.product.productId === product.productId);
         if (productPresent.length !== 0 && !existingProduct) {
-            alert("Product already present");
+            enqueueSnackbar("Product already present in cart", { variant: "error" });
             return;
         }
     }

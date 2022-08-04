@@ -91,7 +91,7 @@ const Register = () => {
                 username,
                 name,
                 password,
-                role: "USER",
+                role: "CUSTOMER",
                 email
             }
             axios.post(`${backendUrl}/user/register`, data).then(res => {

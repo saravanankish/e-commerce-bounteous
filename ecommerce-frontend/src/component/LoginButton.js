@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '../redux/loginSlice';
 import { authUrl, backendUrl } from '../config';
 
+
 const LoginButton = ({ refresh, ...rest }) => {
 
     const [searchParam,] = useSearchParams();
@@ -41,8 +42,11 @@ const LoginButton = ({ refresh, ...rest }) => {
                             token.received = new Date();
                             token.role = data.data.role;
                             sessionStorage.setItem("token", JSON.stringify(token))
-                            navigate("/")
-                            dispatch(login())
+                            dispatch(login(data.data.role))
+                            if (data.data.role !== "CUSTOMER") {
+                                navigate("/admin")
+                                window.location.reload()
+                            }
                         }
                     })
                 }

@@ -14,6 +14,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
     const logoutSuccess = () => {
         sessionStorage.removeItem("token")
         navigate("/")
+        window.location.reload()
         dispatch(loggout())
     }
 
@@ -24,7 +25,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
 
     useEffect(() => {
         if (searchParam.get("logout")) {
-            window.opener.logout()
+            window.opener.logoutSuccess()
             window.close()
         }
         // eslint-disable-next-line

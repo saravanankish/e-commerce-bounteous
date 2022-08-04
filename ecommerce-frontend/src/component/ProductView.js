@@ -21,7 +21,6 @@ const ProductView = ({ loggedIn, size, setRefreshCart }) => {
             if (res.data.products.length) {
                 setProducts(res.data.products);
                 setTotalPages(res.data.totalPages);
-                console.log(res.data.products)
                 setLoaded(true);
             }
         })
@@ -48,7 +47,7 @@ const ProductView = ({ loggedIn, size, setRefreshCart }) => {
                         <Grid xs={12} item style={{ display: 'flex', justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
                             <div style={{ display: "flex" }}>
                                 <Button
-                                    style={{ backgroundColor: "gainsboro" }}
+                                    style={{ backgroundColor: "#636363" }}
                                     variant="contained"
                                     startIcon={<WestIcon />}
                                     disabled={page === 0}
@@ -70,7 +69,7 @@ const ProductView = ({ loggedIn, size, setRefreshCart }) => {
                                     {page + 1}
                                 </Box>
                                 <Button
-                                    style={{ backgroundColor: "gainsboro" }}
+                                    style={{ backgroundColor: "#636363" }}
                                     onClick={nextPage}
                                     variant="contained"
                                     endIcon={<EastIcon />}

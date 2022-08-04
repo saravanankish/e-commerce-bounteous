@@ -6,6 +6,8 @@ import { loggout } from '../redux/loginSlice';
 import ProductView from "../component/ProductView";
 import { Grid } from "@mui/material";
 import Cart from "../component/Cart";
+import Navbar from '../component/Navbar';
+import Footer from '../component/Footer';
 
 const Home = () => {
     const [searchParam,] = useSearchParams();
@@ -32,17 +34,21 @@ const Home = () => {
     }, [searchParam.get("logout")])
 
     return (
-        <div style={{ minHeight: "95vh", backgroundColor: "cornsilk" }}>
-            <Grid container >
-                <ProductView setRefreshCart={setRefreshCart} loggedIn={loggedIn} size={loggedIn ? 9.5 : 12} />
-                {
-                    loggedIn &&
-                    <Grid item xs={2.5}>
-                        <Cart refreshCart={refreshCart} />
-                    </Grid>
-                }
-            </Grid>
-        </div>
+        <>
+            <Navbar showAuth={!loggedIn} />
+            <div style={{ marginTop: "45px", minHeight: "95vh" }}>
+                <Grid container >
+                    <ProductView setRefreshCart={setRefreshCart} loggedIn={loggedIn} size={loggedIn ? 9.5 : 12} />
+                    {
+                        loggedIn &&
+                        <Grid item xs={2.5}>
+                            <Cart refreshCart={refreshCart} />
+                        </Grid>
+                    }
+                </Grid>
+            </div>
+            <Footer />
+        </>
     );
 }
 
