@@ -26,7 +26,6 @@ public class ProductController {
 	private ProductService prodService;
 
 	@GetMapping
-//	@PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPPORT')")
 	public ResponseEntity<ProductResponseModel> getAllProducts(@RequestParam(required = false, name = "limit") Integer limit,
 			@RequestParam(required = false, name = "page") Integer page) {
 		if(page == null ) page = 0;

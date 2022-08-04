@@ -24,13 +24,13 @@ public class CartController {
 	private CartService cartService;
 
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_USER')")
+	@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
 	public ResponseEntity<Cart> getUserCart(Principal principal) {
 		return new ResponseEntity<Cart>(cartService.getUserCart(principal.getName()), HttpStatus.OK);
 	}
 	
 	@PostMapping("/add")
-	@PreAuthorize("hasAuthority('ROLE_USER')")
+	@PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
 	public ResponseEntity<Cart> addToCart(Principal principal, @RequestBody ProductQuantityMapper productQty) {
 		return new ResponseEntity<Cart>(cartService.addProductsToCart(principal.getName(), productQty), HttpStatus.CREATED);
 	}
