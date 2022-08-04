@@ -24,5 +24,4 @@ public class Cart {
 	@JoinColumn(name = "products_cart")
 	private List<ProductQuantityMapper> products;
 	
-	private double value;
 }

@@ -4,9 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { loggout } from '../redux/loginSlice';
 import ProductView from "../component/ProductView";
-import { Grid, setRef } from "@mui/material";
+import { Grid } from "@mui/material";
 import Cart from "../component/Cart";
-import fetchCart from '../util/fetchCart';
 
 const Home = () => {
     const [searchParam,] = useSearchParams();
@@ -21,6 +20,7 @@ const Home = () => {
 
     useEffect(() => {
         window.logout = logoutSuccess;
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -28,11 +28,11 @@ const Home = () => {
             window.opener.logout()
             window.close()
         }
+        // eslint-disable-next-line
     }, [searchParam.get("logout")])
 
     return (
-        <div style={{ paddingBottom: "20px", backgroundColor: "cornsilk" }}>
-            {/* <Navbar showAuth={!loggedIn} /> */}
+        <div style={{ minHeight: "95vh", backgroundColor: "cornsilk" }}>
             <Grid container >
                 <ProductView setRefreshCart={setRefreshCart} loggedIn={loggedIn} size={loggedIn ? 9.5 : 12} />
                 {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
+import com.saravanank.ecommerce.resourceserver.model.ProductResponseModel;
 import com.saravanank.ecommerce.resourceserver.service.ProductService;
 
 @RestController
@@ -26,11 +27,11 @@ public class ProductController {
 
 	@GetMapping
 //	@PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPPORT')")
-	public ResponseEntity<List<Product>> getAllProducts(@RequestParam(required = false, name = "limit") Integer limit,
+	public ResponseEntity<ProductResponseModel> getAllProducts(@RequestParam(required = false, name = "limit") Integer limit,
 			@RequestParam(required = false, name = "page") Integer page) {
 		if(page == null ) page = 0;
 		if(limit == null) limit = 12;
-		return new ResponseEntity<List<Product>>(prodService.getAllProducts(page, limit), HttpStatus.OK);
+		return new ResponseEntity<ProductResponseModel>(prodService.getAllProducts(page, limit), HttpStatus.OK);
 	}
 
 	@PostMapping

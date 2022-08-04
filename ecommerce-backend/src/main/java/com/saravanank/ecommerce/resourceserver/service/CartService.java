@@ -33,15 +33,6 @@ public class CartService {
 		return user.getCart();
 	}
 
-	public void getValue(Cart cart) {
-		double total = 0;
-		List<ProductQuantityMapper> products = cart.getProducts();
-		for(ProductQuantityMapper product: products) {
-			total += (product.getProduct().getPrice() * product.getQuantity());
-		}
-		cart.setValue(total);
-	}
-	
 	public Cart addProductsToCart(String username, ProductQuantityMapper product) {
 		User user = userRepo.findByUsername(username);
 		if (user == null)
@@ -70,8 +61,14 @@ public class CartService {
 		} else {
 			userCart.getProducts().add(product);
 		}
-		getValue(userCart);
 		user.setCart(userCart);
+		userRepo.saveAndFlush(user);
+		return user.getCart();
+	}
+	
+	public Cart saveCart(String username, Cart cart ) {
+		User user = userRepo.findByUsername(username);
+		user.setCart(cart);
 		userRepo.saveAndFlush(user);
 		return user.getCart();
 	}

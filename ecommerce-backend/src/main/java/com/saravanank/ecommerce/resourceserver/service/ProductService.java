@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
+import com.saravanank.ecommerce.resourceserver.model.ProductResponseModel;
 import com.saravanank.ecommerce.resourceserver.repository.ProductRepository;
 
 @Service
@@ -27,9 +28,15 @@ public class ProductService {
 		return (List<Product>) this.productRepo.saveAll(products);
 	}
 	
-	public List<Product> getAllProducts(Integer page, Integer limit) {
+	public ProductResponseModel getAllProducts(Integer page, Integer limit) {
 		PageRequest pageReq = PageRequest.of(page, limit);
-		return this.productRepo.findAll(pageReq).toList();
+		ProductResponseModel productResponse = new ProductResponseModel();
+		productResponse.setProducts(this.productRepo.findAll(pageReq).toList());
+		productResponse.setTotal(productRepo.count());
+		productResponse.setCurrentPage(page);
+		productResponse.setLimit(limit);
+		productResponse.setTotalPages(productRepo.count() / limit);
+		return productResponse;
 	}
 	
 }

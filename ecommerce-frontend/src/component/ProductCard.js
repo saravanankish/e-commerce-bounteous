@@ -7,11 +7,7 @@ import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { AddShoppingCartOutlined } from "@mui/icons-material";
-import { backendUrl } from '../config';
-import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import getToken from '../util/tokenGetter';
-import fetchCart from '../util/fetchCart';
 import addToCart from '../util/addToCart';
 
 const ProductCard = ({ product, setRefreshCart }) => {

@@ -19,6 +19,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
 
     useEffect(() => {
         window.logout = logoutSuccess;
+        // eslint-disable-next-line
     }, [])
 
     useEffect(() => {
@@ -26,6 +27,7 @@ const LogoutButton = ({ refresh, ...rest }) => {
             window.opener.logout()
             window.close()
         }
+        // eslint-disable-next-line
     }, [searchParam.get("logout")])
 
     const popup = () => {

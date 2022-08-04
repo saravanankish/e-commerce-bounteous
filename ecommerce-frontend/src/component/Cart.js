@@ -1,11 +1,9 @@
 import {
     AddOutlined,
     RemoveOutlined,
-    ShoppingCart,
     ShoppingCartOutlined,
-    Close
 } from "@mui/icons-material";
-import { Button, IconButton, Stack, Grid, Toolbar, Drawer, Typography, Box } from "@mui/material";
+import { IconButton, Stack, Grid, Typography, Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import "./cart.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -41,16 +39,29 @@ const ItemQuantity = ({
     );
 };
 
-
 const Cart = () => {
 
     const cart = useSelector(state => state.cart.cart);
     const dispatch = useDispatch();
+    const [cartValue, setCartValue] = useState(0);
 
     useEffect(() => {
         fetchCart(dispatch)
+        // eslint-disable-next-line
     }, [])
 
+    useEffect(() => {
+        if (cart.products.length > 0)
+            getCartValue()
+    }, [cart])
+
+    const getCartValue = () => {
+        var total = 0;
+        cart.products.forEach(element => {
+            total += (element.product.price * element.quantity)
+        });
+        setCartValue(total)
+    }
 
     if (!cart.products?.length) {
         return (
@@ -64,7 +75,7 @@ const Cart = () => {
     }
 
     return (
-        <Box className="cart" sx={{ mt: 1 }}>
+        <Box className="cart" >
             <Typography variant="h5" color="primary" sx={{ pl: "1rem", pt: "1rem", fontWeight: 700 }}>Cart</Typography>
             {
                 cart.products.map(item => (
@@ -104,6 +115,26 @@ const Cart = () => {
                     </Box>
                 ))
             }
+            <Box
+                padding="1rem"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+            >
+                <Box color="#3C3C3C" alignSelf="center">
+                    Order total
+                </Box>
+                <Box
+                    color="#3C3C3C"
+                    fontWeight="700"
+                    fontSize="1.5rem"
+                    alignSelf="center"
+                    data-testid="cart-total"
+                >
+                    {cartValue}
+                </Box>
+            </Box>
+
         </Box>
     )
 
