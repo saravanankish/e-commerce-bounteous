@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { useNavigate } from "react-router-dom";
 
 const links = [
@@ -18,15 +19,22 @@ const links = [
         name: "Add Product",
         icon: <AddBoxIcon />,
         id: "addProduct",
-        navigate: "/admin/add-product",
+        navigate: "/admin/add/product",
         role: "ADMIN"
     },
     {
         name: "Add Customer",
         icon: <PersonAddIcon />,
         id: "addCustomer",
-        navigate: "/admin/add-customer",
+        navigate: "/admin/add/customer",
         role: "ADMIN"
+    },
+    {
+        name: "Products",
+        icon: <InventoryIcon />,
+        id: "products",
+        navigate: "/admin/products",
+        role: "ALL"
     },
     {
         name: "Customers",

@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.model;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -20,9 +21,13 @@ public class Order {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private long orderId;
 
-	private double value;
+	private float value;
+	
+	private Date orderDate;
+	
+	private String orderStatus;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "products")

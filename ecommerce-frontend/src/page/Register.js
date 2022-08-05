@@ -12,6 +12,8 @@ import {
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { backendUrl } from '../config';
+import { validateEmail, validatePassword, validateUsername } from '../util/validations';
+import { useSnackbar } from 'notistack';
 
 const Register = () => {
 
@@ -27,66 +29,15 @@ const Register = () => {
         username: "",
     })
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar()
 
     if (loggedIn) {
         return <Navigate to="/" />
     }
 
-    const validatePassword = () => {
-        if (password === "") {
-            setErrors(prev => ({ ...prev, password: "Password is required" }))
-            return false;
-        } else if (password !== "" && confirmPassword === "") {
-            setErrors(prev => ({ ...prev, password: "Password and confirm password does not match" }))
-            return false;
-        } else if (password !== confirmPassword) {
-            setErrors(prev => ({ ...prev, password: "Password and confirm password does not match" }))
-            return false;
-        } else if (!password.match(/[A-Z]/g)) {
-            setErrors(prev => ({ ...prev, password: "Password should contain uppercase letter" }))
-            return false;
-        } else if (!password.match(/[a-z]/g)) {
-            setErrors(prev => ({ ...prev, password: "Password should contain lowercase letter" }))
-            return false;
-        } else if (!password.match(/[0-9]/g)) {
-            setErrors(prev => ({ ...prev, password: "Password should contain digits" }))
-            return false;
-        } else if (!password.match(/[!@#$%^&*]/g)) {
-            setErrors(prev => ({ ...prev, password: "Password should contain special characters" }))
-            return false;
-        } else {
-            setErrors(prev => ({ ...prev, password: "" }))
-            return true;
-        }
-    }
-
-    const validateEmail = () => {
-        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (email === "") {
-            setErrors(prev => ({ ...prev, email: "Email is required" }))
-            return false;
-        } else if (!email.match(validRegex)) {
-            setErrors(prev => ({ ...prev, email: "Invalid email" }))
-            return false;
-        } else {
-            setErrors(prev => ({ ...prev, email: "" }))
-            return true;
-        }
-    }
-
-    const validateUsername = () => {
-        if (username.length < 6) {
-            setErrors(prev => ({ ...prev, username: "Username should contain alteast 6 letter" }))
-            return false;
-        } else {
-            setErrors(prev => ({ ...prev, username: "" }))
-            return true;
-        }
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validateEmail() && validatePassword() && validateUsername()) {
+        if (validateEmail(setErrors, email) && validatePassword(setErrors, password, confirmPassword) && validateUsername(setErrors, username)) {
             const data = {
                 username,
                 name,
@@ -96,7 +47,7 @@ const Register = () => {
             }
             axios.post(`${backendUrl}/user/register`, data).then(res => {
                 if (res.data.userId) {
-                    alert("Registered successfully")
+                    enqueueSnackbar("Registered successfully", { variant: "success" });
                     navigate("/")
                 }
             })
@@ -129,7 +80,7 @@ const Register = () => {
                                     required
                                     value={username}
                                     onChange={e => setUsername(e.target.value)}
-                                    onBlur={validateUsername}
+                                    onBlur={(e) => validateUsername(setErrors, e.target.value)}
                                     {...(errors.username && { helperText: errors.username, error: true })}
                                 />
                             </Grid>
@@ -142,7 +93,7 @@ const Register = () => {
                                     type="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
-                                    onBlur={validateEmail}
+                                    onBlur={e => validateEmail(setErrors, e.target.value)}
                                     {...(errors.email && { helperText: errors.email, error: true })}
                                 />
                             </Grid>
@@ -155,7 +106,7 @@ const Register = () => {
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
                                     type="password"
-                                    onBlur={validatePassword}
+                                    onBlur={(e) => validatePassword(setErrors, e.target.value, confirmPassword)}
                                     {...(errors.password && { helperText: errors.password, error: true })}
                                 />
                             </Grid>
@@ -166,7 +117,7 @@ const Register = () => {
                                     label="Confirm password"
                                     required
                                     value={confirmPassword}
-                                    onBlur={validatePassword}
+                                    onBlur={(e) => validatePassword(setErrors, password, e.target.value)}
                                     onChange={e => setConfirmPassword(e.target.value)}
                                     type="password"
                                 />

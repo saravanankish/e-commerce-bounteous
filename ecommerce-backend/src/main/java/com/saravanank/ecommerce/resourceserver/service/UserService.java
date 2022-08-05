@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
 
 	public User addUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		if (user.getRole().equals("USER"))
+		if (user.getRole().equals("CUSTOMER"))
 			user.setCart(new Cart());
 		return userRepo.save(user);
 	}
@@ -72,14 +72,19 @@ public class UserService implements UserDetailsService {
 		return user.get();
 	}
 
-	public User updateUser(User user) {
-		if (user.getUserId() == 0)
+	public User updateUser(User user, long customerId) {
+		if (customerId == 0)
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id should be present");
-		boolean userExists = userRepo.existsById(user.getUserId());
-		if (userExists)
+		Optional<User> userData = userRepo.findById(customerId);
+		if (userData.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-		userRepo.saveAndFlush(user);
-		return user;
+		User userInDb = userData.get();
+		if(user.getName() != null) userInDb.setName(user.getName());
+		if(user.getEmail() != null) userInDb.setEmail(user.getEmail());
+		if(user.getUsername() != null) userInDb.setUsername(user.getUsername());
+		if(user.getRole() != null) userInDb.setRole(user.getRole()); 
+		userRepo.saveAndFlush(userInDb);
+		return userInDb;
 	}
 	
 	public void deleteUser(long id) {

@@ -53,12 +53,12 @@ const ViewCustomer = () => {
     }
 
     return (
-        <Container style={{ minHeight: "75vh" }}>
+        <Container style={{ minHeight: "76vh" }}>
             <div style={{ display: "flex", justifyContent: "space-between", paddingTop: "15px" }}>
                 <Typography variant="h4" color="primary">Customers</Typography>
                 {
                     role === "ADMIN" &&
-                    <Button variant="contained" onClick={() => navigate("/admin/add-customer")}>Add Customer</Button>
+                    <Button variant="contained" onClick={() => navigate("/admin/add/customer")}>Add Customer</Button>
                 }
             </div>
             <TextField
@@ -101,7 +101,7 @@ const ViewCustomer = () => {
                                     {
                                         role === "ADMIN" &&
                                         <TableCell align="center">
-                                            <IconButton color="primary">
+                                            <IconButton color="primary" onClick={() => navigate("/admin/edit/customer/" + customer.userId)}>
                                                 <EditIcon />
                                             </IconButton>
                                             <IconButton color="error" onClick={() => deleteCustomer(customer.userId)}>

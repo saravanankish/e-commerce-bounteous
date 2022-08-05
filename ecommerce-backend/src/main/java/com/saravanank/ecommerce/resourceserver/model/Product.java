@@ -25,7 +25,7 @@ public class Product {
 	private long productId;
 	private String name;
 	private String description;
-	private double price;
+	private float price;
 	private int quantity;
 	private float rating;
 	private String thumbnail;

@@ -42,16 +42,22 @@ public class UserController {
 		return userService.addUser(user);
 	}
 	
+	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public User addUser(@RequestBody User user) {
+		return userService.addUser(user);
+	}
+	
 	@GetMapping("/customer")
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPPORT')")
 	public ResponseEntity<List<User>> getAllCustomers() {
 		return new ResponseEntity<List<User>>(userService.getCustomers(), HttpStatus.OK);
 	}
 	
-	@PutMapping
+	@PutMapping("/{customerId}")
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
-	public ResponseEntity<User> updateUser(@RequestBody User user) {
-		return new ResponseEntity<User>(userService.updateUser(user), HttpStatus.CREATED);
+	public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("customerId") long customerId) {
+		return new ResponseEntity<User>(userService.updateUser(user, customerId), HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{userId}")

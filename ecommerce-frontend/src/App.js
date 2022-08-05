@@ -11,6 +11,7 @@ import AdminPage from './page/AdminPage';
 import ViewCustomer from './page/ViewCustomer';
 import AddProduct from './page/AddProduct';
 import AddCustomer from './page/AddCustomer';
+import ProductsView from './page/ProductsView';
 
 function App() {
 
@@ -21,6 +22,9 @@ function App() {
     if (sessionStorage.getItem("token")) {
       setRole(JSON.parse(sessionStorage.getItem("token")).role)
       setLoggedIn(sessionStorage.getItem("token") !== null && sessionStorage.getItem("token") !== undefined)
+    } else {
+      if (window.location.href !== "http://127.0.0.1:3000/" && window.location.href !== "http://127.0.0.1:3000/register")
+        window.location.replace("http://127.0.0.1:3000")
     }
     // eslint-disable-next-line
   }, [sessionStorage.getItem("token")])
@@ -47,9 +51,15 @@ function App() {
                 </Route>
                 :
                 <Route path="/admin" element={<AdminPage />} >
-                  <Route path="add-product" element={<AddProduct />} />
-                  <Route path="add-customer" element={<AddCustomer type="Add" />} />
+                  <Route path="add">
+                    <Route path="product" element={<AddProduct />} />
+                    <Route path="customer" element={<AddCustomer type="Add" />} />
+                  </Route>
+                  <Route path="edit">
+                    <Route path="customer/:customerId" element={<AddCustomer type="Update" edit={true} />} />
+                  </Route>
                   <Route path="customers" element={<ViewCustomer />} />
+                  <Route path="products" element={<ProductsView />} />
                 </Route>
             }
             {
