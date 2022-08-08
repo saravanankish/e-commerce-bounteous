@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import com.saravanank.ecommerce.resourceserver.repository.UserRepository;
 
 @Service
 public class CartService {
+	
+	private static final Logger logger = Logger.getLogger(CartService.class);
 
 	@Autowired
 	private UserRepository userRepo;
@@ -28,18 +31,25 @@ public class CartService {
 
 	public Cart getUserCart(String username) {
 		User user = userRepo.findByUsername(username);
-		if (user == null)
+		if (user == null) {
+			logger.warn("Cart of user with username=" + username + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		}
+		logger.warn("Returned cart of user with username=" + username);
 		return user.getCart();
 	}
 
 	public Cart addProductsToCart(String username, ProductQuantityMapper product) {
 		User user = userRepo.findByUsername(username);
-		if (user == null)
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		if (user == null) {
+			logger.warn("Cart of user with username=" + username + " not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");			
+		}
 		Optional<Product> productFromDatabase = productRepo.findById(product.getProductId());
-		if (productFromDatabase.isEmpty())
+		if (productFromDatabase.isEmpty()) {
+			logger.warn("Product with product_id=" + product.getProductId() + " not found");			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
+		}
 		Cart userCart = user.getCart();
 		if(userCart.getProducts() == null) {
 			userCart.setProducts(new ArrayList<ProductQuantityMapper>());
@@ -61,15 +71,10 @@ public class CartService {
 		} else {
 			userCart.getProducts().add(product);
 		}
+		logger.warn("Product added to user cart of user with username=" + username);
 		user.setCart(userCart);
 		userRepo.saveAndFlush(user);
 		return user.getCart();
 	}
 	
-	public Cart saveCart(String username, Cart cart ) {
-		User user = userRepo.findByUsername(username);
-		user.setCart(cart);
-		userRepo.saveAndFlush(user);
-		return user.getCart();
-	}
 }

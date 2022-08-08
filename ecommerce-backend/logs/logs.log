@@ -1,0 +1,1 @@
+[2022-08-08 14:16:40,390] com.saravanank.ecommerce.resourceserver.config.CustomAuthenticationEntryPoint 34 ERROR  -  An error occurred while attempting to decode the Jwt: Signed JWT rejected: Invalid signature

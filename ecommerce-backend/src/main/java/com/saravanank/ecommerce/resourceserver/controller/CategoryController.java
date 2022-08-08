@@ -2,6 +2,7 @@ package com.saravanank.ecommerce.resourceserver.controller;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,45 +19,61 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saravanank.ecommerce.resourceserver.model.Category;
 import com.saravanank.ecommerce.resourceserver.service.CategoryService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/v1/category")
 public class CategoryController {
+	
+	private static final Logger logger = Logger.getLogger(CartController.class);
 
 	@Autowired
 	private CategoryService categoryService;
 
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@ApiOperation(value = "Add category", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<Category> addCategory(@RequestBody Category subCategory) {
+		logger.info("POST request to /api/v1/category");
 		return new ResponseEntity<Category>(categoryService.addSubCategory(subCategory), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/all")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@ApiOperation(value = "Add many categories", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<List<Category>> addCategories(@RequestBody List<Category> subCategories) {
+		logger.info("POST request to /api/v1/category/all");
 		return new ResponseEntity<List<Category>>(categoryService.addSubCategories(subCategories), HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{categoryId}")
+	@ApiOperation(value = "Get category by id", notes = "All users can use this endpoint")
 	public ResponseEntity<Category> getCategoryById(@PathVariable("categoryId") long categoryId) {
+		logger.info("GET request to /api/v1/category/" + categoryId);
 		return new ResponseEntity<Category>(categoryService.getCategoryById(categoryId), HttpStatus.OK);
 	}
 
 	@GetMapping("/all")
+	@ApiOperation(value = "Get all categories", notes = "All users can use this endpoint")
 	public ResponseEntity<List<Category>> getAllCategories() {
+		logger.info("GET request to /api/v1/category/all");
 		return new ResponseEntity<List<Category>>(categoryService.getAllCategories(), HttpStatus.OK);
 	}
 
 	@PutMapping("/{categoryId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@ApiOperation(value = "Update a category", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<Category> updateCategory(@PathVariable("categoryId") long categoryId,
 			@RequestBody Category category) {
+		logger.info("PUT request to /api/v1/category/" + categoryId);
 		return new ResponseEntity<Category>(categoryService.updateCategory(categoryId, category), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{categoryId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@ApiOperation(value = "Delete a category", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<String> deleteCategory(@PathVariable("categoryId") long categoryId) {
+		logger.info("DELETE request to /api/v1/category/" + categoryId);
 		categoryService.deleteCategroy(categoryId);
 		return new ResponseEntity<String>("Deleted successfully", HttpStatus.CREATED);
 	}
