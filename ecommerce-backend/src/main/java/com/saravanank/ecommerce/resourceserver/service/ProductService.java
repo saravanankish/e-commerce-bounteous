@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
 import com.saravanank.ecommerce.resourceserver.model.ProductResponseModel;
@@ -39,4 +41,9 @@ public class ProductService {
 		return productResponse;
 	}
 	
+	public void deleteProduct(long productId) {
+		boolean productPresent = productRepo.existsById(productId);
+		if(!productPresent) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+		productRepo.deleteById(productId);
+	}
 }
