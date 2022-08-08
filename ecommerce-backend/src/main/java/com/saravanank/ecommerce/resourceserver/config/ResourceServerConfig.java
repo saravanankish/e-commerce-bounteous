@@ -29,6 +29,18 @@ public class ResourceServerConfig {
 
 	@Autowired
 	private UserService userService;
+	
+	private final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/**/swagger-ui/**"
+    };
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,20 +56,16 @@ public class ResourceServerConfig {
 			c.configurationSource(source);
 		});
 		http.csrf().disable()
-				.authorizeRequests(auth -> auth.antMatchers(HttpMethod.GET, "/**/products").permitAll()
+				.authorizeRequests(auth -> auth.antMatchers(AUTH_WHITELIST).permitAll().antMatchers(HttpMethod.GET, "/**/products").permitAll()
 						.antMatchers(HttpMethod.POST, "/**/register").permitAll().anyRequest().authenticated())
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()))
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()).and().authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
 				.exceptionHandling(
-						exceptions -> exceptions.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-								.accessDeniedHandler(new CustomAccessDeniedHandler()));
+						exceptions ->
+							exceptions.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+								.accessDeniedHandler(new CustomAccessDeniedHandler())
+						);
 		return http.build();
 	}
-//
-//	@Bean
-//	@Order(Ordered.HIGHEST_PRECEDENCE)
-//	WebSecurityCustomizer webSecurity() throws Exception {
-//		return web -> web.ignoring().antMatchers(HttpMethod.GET, "/**/products");
-//	}
 
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
