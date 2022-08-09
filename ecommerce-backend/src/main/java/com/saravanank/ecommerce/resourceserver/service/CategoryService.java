@@ -37,6 +37,11 @@ public class CategoryService {
 		return categoryRepo.findAll();
 	}
 	
+	public List<String> getAllSubCategories() {
+		logger.info("Returned all subCategories");
+		return categoryRepo.findAllSubcategories();
+	}
+	
 	public Category updateCategory(long categoryId, Category category) {
 		Optional<Category> categoryInDb = categoryRepo.findById(categoryId);
 		if(categoryInDb.isEmpty()) {

@@ -17,7 +17,7 @@ const useProductRender = (pageNumber) => {
             method: "GET",
             url: `${backendUrl}/products`,
             params: { page: pageNumber },
-            cancelToken: new axios.CancelToken(c => cancel = c)
+            cancelToken: new axios.CancelToken(c => cancel = c),
         }).then(res => {
             if (res.status === 200) {
                 setProducts(prev => {

@@ -73,7 +73,7 @@ public class CartService {
 		}
 		logger.warn("Product added to user cart of user with username=" + username);
 		user.setCart(userCart);
-		userRepo.saveAndFlush(user);
+		userRepo.save(user);
 		return user.getCart();
 	}
 	

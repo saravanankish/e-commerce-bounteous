@@ -32,17 +32,27 @@ public class ProductController {
 	@Autowired
 	private ProductService prodService;
 
+	@GetMapping("/{productId}")
+	@ApiOperation(value = "Get product by id", notes = "This is an open endpoint")
+	public ResponseEntity<Product> getProductById(@PathVariable("productId") long productId) {
+		logger.info("GET request to /api/v1/products/" + productId);
+		return new ResponseEntity<Product>(prodService.getProductById(productId), HttpStatus.OK);
+	}
+
 	@GetMapping
 	@ApiOperation(value = "Get all products", notes = "This is an open endpoint")
 	public ResponseEntity<ProductResponseModel> getAllProducts(
 			@RequestParam(required = false, name = "limit") Integer limit,
-			@RequestParam(required = false, name = "page") Integer page) {
+			@RequestParam(required = false, name = "page") Integer page,
+			@RequestParam(required = false, name = "search") String search) {
 		logger.info("GET request to /api/v1/products?page=" + page + "&limit=" + limit);
 		if (page == null)
 			page = 0;
 		if (limit == null)
 			limit = 12;
-		return new ResponseEntity<ProductResponseModel>(prodService.getAllProducts(page, limit), HttpStatus.OK);
+		if (limit > 100)
+			limit = 100;
+		return new ResponseEntity<ProductResponseModel>(prodService.getAllProducts(page, limit, search), HttpStatus.OK);
 	}
 
 	@PostMapping
@@ -64,7 +74,8 @@ public class ProductController {
 	@PutMapping("/{productId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Update a product", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<Product> updateProduct(@RequestBody Product product, @PathVariable("productId") long productId) {
+	public ResponseEntity<Product> updateProduct(@RequestBody Product product,
+			@PathVariable("productId") long productId) {
 		logger.info("PUT request to /api/v1/products");
 		return new ResponseEntity<Product>(prodService.updateProduct(product, productId), HttpStatus.CREATED);
 	}

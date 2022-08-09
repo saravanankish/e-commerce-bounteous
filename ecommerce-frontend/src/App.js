@@ -52,11 +52,12 @@ function App() {
                 :
                 <Route path="/admin" element={<AdminPage />} >
                   <Route path="add">
-                    <Route path="product" element={<AddProduct />} />
+                    <Route path="product" element={<AddProduct type="Add" />} />
                     <Route path="customer" element={<AddCustomer type="Add" />} />
                   </Route>
                   <Route path="edit">
                     <Route path="customer/:customerId" element={<AddCustomer type="Update" edit={true} />} />
+                    <Route path="product/:productId" element={<AddProduct type="Update" edit={true} />} />
                   </Route>
                   <Route path="customers" element={<ViewCustomer />} />
                   <Route path="products" element={<ProductsView />} />

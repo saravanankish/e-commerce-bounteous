@@ -36,7 +36,7 @@ const Home = () => {
     return (
         <>
             <Navbar showAuth={!loggedIn} />
-            <div style={{ marginTop: "45px", minHeight: "95vh" }}>
+            <div style={{ marginTop: "45px", minHeight: "95vh", marginBottom: "30px" }}>
                 <Grid container >
                     <ProductView setRefreshCart={setRefreshCart} loggedIn={loggedIn} size={loggedIn ? 9.5 : 12} />
                     {

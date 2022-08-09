@@ -56,7 +56,7 @@ public class ResourceServerConfig {
 			c.configurationSource(source);
 		});
 		http.csrf().disable()
-				.authorizeRequests(auth -> auth.antMatchers(AUTH_WHITELIST).permitAll().antMatchers(HttpMethod.GET, "/**/products").permitAll()
+				.authorizeRequests(auth -> auth.antMatchers(AUTH_WHITELIST).permitAll().antMatchers(HttpMethod.GET, "/**/products/**").permitAll()
 						.antMatchers(HttpMethod.POST, "/**/register").permitAll().anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()).and().authenticationEntryPoint(new CustomAuthenticationEntryPoint()).accessDeniedHandler(new CustomAccessDeniedHandler()))
 				.exceptionHandling(

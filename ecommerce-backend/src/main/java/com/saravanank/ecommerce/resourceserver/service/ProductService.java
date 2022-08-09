@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ public class ProductService {
 	
 	@Autowired
 	private ProductRepository productRepo;
+	
+	public Product getProductById(long productId) {
+		Optional<Product> product = productRepo.findById(productId);
+		if(product.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+		return product.get();
+	}
 	
 	public Product addProduct(Product product) {
 		productRepo.save(product);
@@ -54,14 +61,20 @@ public class ProductService {
 		return (List<Product>) this.productRepo.saveAll(products);
 	}
 	
-	public ProductResponseModel getAllProducts(Integer page, Integer limit) {
+	public ProductResponseModel getAllProducts(Integer page, Integer limit, String search) {
 		PageRequest pageReq = PageRequest.of(page, limit);
 		ProductResponseModel productResponse = new ProductResponseModel();
-		productResponse.setProducts(this.productRepo.findAll(pageReq).toList());
-		productResponse.setTotal(productRepo.count());
-		productResponse.setCurrentPage(page);
+		Page<Product> products;
+		if(search == null) {			
+			products = productRepo.findAll(pageReq);
+		} else {
+			 products = productRepo.findByNameContainingOrDescriptionContaining(search, search, pageReq);
+		}
+		productResponse.setProducts(products.toList());
+		productResponse.setTotal(products.getTotalElements());
+		productResponse.setTotalPages(products.getTotalPages());
+		productResponse.setCurrentPage(products.getNumber());
 		productResponse.setLimit(limit);
-		productResponse.setTotalPages(productRepo.count() / limit);
 		logger.info("Returned products");
 		return productResponse;
 	}

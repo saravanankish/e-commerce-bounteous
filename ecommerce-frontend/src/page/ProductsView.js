@@ -2,8 +2,6 @@ import {
     Container,
     Typography,
     Button,
-    TextField,
-    InputAdornment,
     Table,
     TableContainer,
     TableRow,
@@ -11,25 +9,21 @@ import {
     TableHead,
     TableBody,
     IconButton,
-    Toolbar,
-    Checkbox,
     TableSortLabel,
     Box,
     Rating,
-    Tooltip,
-    TablePagination
+    TablePagination,
+    TextField,
+    InputAdornment
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
-import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import getToken from "../util/tokenGetter";
 import { backendUrl } from "../config";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import PropTypes from 'prop-types';
@@ -96,7 +90,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { order, orderBy, onRequestSort } = props;
 
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
@@ -105,17 +99,6 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        color="primary"
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={rowCount > 0 && numSelected === rowCount}
-                        onChange={onSelectAllClick}
-                        inputProps={{
-                            'aria-label': 'select all products',
-                        }}
-                    />
-                </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -151,78 +134,47 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
-const EnhancedTableToolbar = (props) => {
-    const { numSelected } = props;
-
-    return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h5"
-                    id="tableTitle"
-                    component="div"
-                    className="title"
-                >
-                    Products
-                </Typography>
-            )}
-
-            {numSelected > 0 && (
-                <Tooltip title="Delete">
-                    <IconButton onClick={props.handleDeleteSelectedProducts}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
-    );
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-};
-
-
 const ProductsView = () => {
 
     const role = useSelector(state => state.login.role);
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [search, setSearch] = useState("");
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('calories');
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const { enqueueSnackbar } = useSnackbar();
-    const [refresh, setRefresh] = useState(false);
     const [totalProducts, setTotalProducts] = useState(1);
+    const [debounceTime, setDebounceTime] = useState(null);
 
     useEffect(() => {
-        fetchProducts(rowsPerPage, page);
+        if (!search)
+            fetchProducts(rowsPerPage, page);
+        else
+            fetchProducts(rowsPerPage, page, search)
+        // eslint-disable-next-line
     }, [page, rowsPerPage])
 
-    const fetchProducts = async (limit, page) => {
-        var token = await getToken();
-        axios.get(`${backendUrl}/products?limit=${limit}&page=${page}`, { headers: { "Authorization": "Bearer " + token } }).then(res => {
+    useEffect(() => {
+        if (search)
+            debounce(fetchProducts, 1000)(rowsPerPage, page, search);
+        // eslint-disable-next-line
+    }, [search])
+
+    const debounce = (func, delay) => {
+        let debounceTimer = debounceTime
+        return function (limit, page, search) {
+            clearTimeout(debounceTimer)
+            debounceTimer
+                = setTimeout(() => func(limit, page, search), delay)
+            setDebounceTime(debounceTimer)
+        }
+    }
+
+    const fetchProducts = async (limit, page, search) => {
+        axios.get(`${backendUrl}/products?limit=${limit}&page=${page}&search=${search || ""}`).then(res => {
             setProducts(res.data.products);
             setTotalProducts(res.data.total);
         }).catch(err => {
@@ -236,35 +188,15 @@ const ProductsView = () => {
         setOrderBy(property);
     };
 
-
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = products.map((n) => n._id);
+            const newSelecteds = products.map((n) => n.productId);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
-            );
-        }
-
-        setSelected(newSelected);
-    };
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -274,36 +206,31 @@ const ProductsView = () => {
         setPage(0);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
-
-    // Avoid a layout jump when reaching the last page with empty rows.
-
-    const deleteProduct = async (id, name) => {
-        // axios.delete(config.endpoint + '/products/' + id, { headers: { 'Authorization': "Bearer " + localStorage.getItem('token') } }).then(res => {
-        //     if (res.data.success) {
-        //         setRefresh(curr => !curr)
-        //         enqueueSnackbar('Deleted product - ' + name + ' successfully', { variant: 'success' })
-        //     }
-        // }).catch(err => {
-        //     if (err.response.status === 400) {
-        //         enqueueSnackbar(err.response.message, { variant: 'error' })
-        //     } else {
-        //         enqueueSnackbar("Check whether backend is running", { variant: 'error' })
-        //     }
-        // })
-    }
-
-    const handleDeleteSelectedProducts = (e) => {
-        selected.forEach(id => {
-            deleteProduct(id, products.filter(product => product._id === id)[0].name)
-        })
-    }
-
-
     return (
-        <Box sx={{ mt: 1, mx: 3, mb: 3 }} >
-            <EnhancedTableToolbar numSelected={selected.length} handleDeleteSelectedProducts={handleDeleteSelectedProducts} />
-            <TableContainer style={{ border: '1px solid lightgrey' }} className="tableContainer">
+        <Container sx={{ mt: 1, mx: 3, mb: 3 }} >
+            <div style={{ display: "flex", justifyContent: "space-between", paddingTop: "15px" }}>
+                <Typography variant="h4" color="primary">Products</Typography>
+                {
+                    role === "ADMIN" &&
+                    <Button variant="contained" onClick={() => navigate("/admin/add/product")}>Add Product</Button>
+                }
+            </div>
+            <TextField
+                sx={{ mt: 1 }}
+                fullWidth
+                label="Search Product"
+                placeholder="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon />
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            <TableContainer style={{ border: '1px solid #c9c3ad', borderRadius: "5px", backgroundColor: "white", marginTop: "5px" }} className="tableContainer">
                 <Table
                     sx={{ minWidth: 750 }}
                     aria-labelledby="tableTitle"
@@ -318,38 +245,19 @@ const ProductsView = () => {
                         rowCount={products.length}
                     />
                     <TableBody>
-                        {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-          rows.slice().sort(getComparator(order, orderBy)) */}
                         {stableSort(products, getComparator(order, orderBy))
                             .map((row, index) => {
-                                const isItemSelected = isSelected(row.productId);
-                                const labelId = `enhanced-table-checkbox-${index}`;
-
                                 return (
                                     <TableRow
                                         hover
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
                                         tabIndex={-1}
                                         key={index}
-                                        selected={isItemSelected}
                                     >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                color="primary"
-                                                onClick={(event) => handleClick(event, row.productsId)}
-                                                checked={isItemSelected}
-                                                inputProps={{
-                                                    'aria-labelledby': labelId,
-                                                }}
-                                            />
-                                        </TableCell>
                                         <TableCell>
                                             <img src={row.thumbnail} alt={row.name} width="80" />
                                         </TableCell>
                                         <TableCell
                                             component="th"
-                                            id={labelId}
                                             scope="row"
                                         >
                                             {row.name}
@@ -369,10 +277,10 @@ const ProductsView = () => {
                                         </TableCell>
                                         <TableCell>{row.price}</TableCell>
                                         <TableCell align="center">
-                                            <IconButton sx={{ mr: 2 }} color="primary" >
+                                            <IconButton sx={{ mr: 2 }} color="primary" onClick={() => navigate("/admin/edit/product/" + row.productId)} >
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton color="error" onClick={() => deleteProduct(row._id, row.name)}>
+                                            <IconButton color="error">
                                                 <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
@@ -392,7 +300,7 @@ const ProductsView = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </TableContainer>
-        </Box>
+        </Container>
     )
 }
 

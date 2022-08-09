@@ -53,4 +53,24 @@ const validateUsername = (setErrors, username) => {
     }
 }
 
-export { validateEmail, validatePassword, validateUsername };
+const validateImageUrl = (url) => {
+    // var pattern = new RegExp('^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$', 'i');
+    // console.log(!!pattern.test(url))
+    // if (!!pattern.test(url)) {
+    let image = new Image();
+    image.src = url
+    image.onload = () => {
+        console.log("true")
+        return true
+    }
+    image.onerror = () => {
+        return false
+    }
+    console.log(image.onload)
+    return image.onloadeddata;
+    // } else {
+    // return false
+    // }
+}
+
+export { validateEmail, validatePassword, validateUsername, validateImageUrl };

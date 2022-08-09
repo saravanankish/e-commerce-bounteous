@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import banner from "../static/banner1.jpg"
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useSnackbar } from 'notistack';
@@ -6,7 +6,7 @@ import ProductCard from "./ProductCard";
 import CircularProgress from '@mui/material/CircularProgress';
 import useProductRender from "../util/useProductsRender";
 
-const ProductView = ({ loggedIn, size, setRefreshCart }) => {
+const ProductView = ({ size, setRefreshCart }) => {
 
     const [page, setPage] = useState(0);
     const { loading, errors, products, hasMore } = useProductRender(page);
@@ -15,6 +15,7 @@ const ProductView = ({ loggedIn, size, setRefreshCart }) => {
     useEffect(() => {
         if (errors)
             enqueueSnackbar("Some error occured", { variant: "error" })
+        // eslint-disable-next-line
     }, [errors])
 
     const lastItemObserver = useRef();
@@ -28,6 +29,7 @@ const ProductView = ({ loggedIn, size, setRefreshCart }) => {
             }
         })
         if (node) lastItemObserver.current.observe(node)
+        // eslint-disable-next-line
     }, [hasMore, loading]);
 
     return (

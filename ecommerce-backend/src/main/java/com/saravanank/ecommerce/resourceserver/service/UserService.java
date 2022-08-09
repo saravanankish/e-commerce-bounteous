@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		if (user.getRole().equals("CUSTOMER"))
 			user.setCart(new Cart());
-		userRepo.saveAndFlush(user);
+		userRepo.save(user);
 		logger.info("Added user with userid=" + user.getUserId());
 		logger.info("Added user with userid=" + user.getUserId());
 		return user;
@@ -98,7 +98,7 @@ public class UserService implements UserDetailsService {
 		if(user.getEmail() != null) userInDb.setEmail(user.getEmail());
 		if(user.getUsername() != null) userInDb.setUsername(user.getUsername());
 		if(user.getRole() != null) userInDb.setRole(user.getRole()); 
-		userRepo.saveAndFlush(userInDb);
+		userRepo.save(userInDb);
 		logger.info("Updated user with userId=" + customerId);
 		return userInDb;
 	}

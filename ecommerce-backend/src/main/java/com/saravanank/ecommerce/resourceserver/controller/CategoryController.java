@@ -59,6 +59,13 @@ public class CategoryController {
 		logger.info("GET request to /api/v1/category/all");
 		return new ResponseEntity<List<Category>>(categoryService.getAllCategories(), HttpStatus.OK);
 	}
+	
+	@GetMapping("/subcategory")
+	@ApiOperation(value = "Get all categories", notes = "All users can use this endpoint")
+	public ResponseEntity<List<String>> getAllSubCategories() {
+		logger.info("GET request to /api/v1/category/all");
+		return new ResponseEntity<List<String>>(categoryService.getAllSubCategories(), HttpStatus.OK);
+	}
 
 	@PutMapping("/{categoryId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
