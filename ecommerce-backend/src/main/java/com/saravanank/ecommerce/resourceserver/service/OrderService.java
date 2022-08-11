@@ -33,7 +33,8 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		logger.info("Returned order of user with username=" + username);
-		return userInDb.getOrders();
+//		return userInDb.getOrders();
+		return null;
 	}
 	
 	public List<Order> getUserOrders(long userId) {
@@ -43,7 +44,8 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		logger.info("Returned order of user with userId=" + userId);
-		return userInDb.get().getOrders();
+//		return userInDb.get().getOrders();
+		return null;
 	}
 	
 	public List<Order> getAllOrders() {
@@ -58,7 +60,7 @@ public class OrderService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
 		}
 		Order orderData = orderInDb.get();
-		orderData.setOrderStatus("CANCELLED");
+//		orderData.setOrderStatus("CANCELLED");
 		orderRepo.saveAndFlush(orderData);
 		logger.info("Cancelled order with orderId=" + orderId);
 		return orderData;

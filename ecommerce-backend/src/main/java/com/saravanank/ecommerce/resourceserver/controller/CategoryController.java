@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -33,17 +34,17 @@ public class CategoryController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Add category", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<Category> addCategory(@RequestBody Category subCategory) {
+	public ResponseEntity<Category> addCategory(@RequestBody Category subCategory, Principal principal) {
 		logger.info("POST request to /api/v1/category");
-		return new ResponseEntity<Category>(categoryService.addSubCategory(subCategory), HttpStatus.CREATED);
+		return new ResponseEntity<Category>(categoryService.addSubCategory(subCategory, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/all")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Add many categories", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<List<Category>> addCategories(@RequestBody List<Category> subCategories) {
+	public ResponseEntity<List<Category>> addCategories(@RequestBody List<Category> subCategories, Principal principal) {
 		logger.info("POST request to /api/v1/category/all");
-		return new ResponseEntity<List<Category>>(categoryService.addSubCategories(subCategories), HttpStatus.CREATED);
+		return new ResponseEntity<List<Category>>(categoryService.addSubCategories(subCategories, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@GetMapping("/{categoryId}")
@@ -71,9 +72,9 @@ public class CategoryController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Update a category", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<Category> updateCategory(@PathVariable("categoryId") long categoryId,
-			@RequestBody Category category) {
+			@RequestBody Category category, Principal principal) {
 		logger.info("PUT request to /api/v1/category/" + categoryId);
-		return new ResponseEntity<Category>(categoryService.updateCategory(categoryId, category), HttpStatus.CREATED);
+		return new ResponseEntity<Category>(categoryService.updateCategory(categoryId, category, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{categoryId}")

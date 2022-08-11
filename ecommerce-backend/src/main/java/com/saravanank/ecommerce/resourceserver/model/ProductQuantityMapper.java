@@ -22,7 +22,7 @@ public class ProductQuantityMapper {
 	private long id;
 	
 	@OneToOne(cascade =  CascadeType.MERGE, fetch = FetchType.EAGER)
-	@JoinColumn(name = "product_quantity")
+	@JoinColumn(name = "product_id")
 	private Product product;
 	
 	private int quantity;

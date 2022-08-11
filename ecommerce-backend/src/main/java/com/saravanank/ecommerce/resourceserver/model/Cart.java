@@ -9,10 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import lombok.Data;
 
 @Entity
+@Table(name = "cart")
 @Data
 public class Cart {
 
@@ -21,7 +24,11 @@ public class Cart {
 	private long id;
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "products_cart")
+	@JoinColumn(name = "cart_id")
 	private List<ProductQuantityMapper> products;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user")
+	private User user;
 	
 }

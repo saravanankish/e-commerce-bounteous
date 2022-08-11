@@ -77,6 +77,7 @@ public class AuthorizationServerConfig {
 				.authorizationGrantType(AuthorizationGrantType.PASSWORD)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.redirectUri("http://127.0.0.1:3000/login/oauth2/code/api-client-oidc")
+				.redirectUri("https://www.getpostman.com/oauth2/callback")
 				.redirectUri("http://127.0.0.1:3000/").scope(OidcScopes.OPENID).scope("e-commerce")
 				.tokenSettings(TokenSettings.builder().refreshTokenTimeToLive(Duration.ofDays(10))
 						.accessTokenTimeToLive(Duration.ofHours(3)).accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)

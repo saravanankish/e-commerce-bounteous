@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -58,26 +59,26 @@ public class ProductController {
 	@PostMapping
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Add a product", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+	public ResponseEntity<Product> addProduct(@RequestBody Product product, Principal principal) {
 		logger.info("POST request to /api/v1/products");
-		return new ResponseEntity<Product>(prodService.addProduct(product), HttpStatus.CREATED);
+		return new ResponseEntity<Product>(prodService.addProduct(product, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/all")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Add many products", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<List<Product>> addProducts(@RequestBody List<Product> products) {
+	public ResponseEntity<List<Product>> addProducts(@RequestBody List<Product> products, Principal principal) {
 		logger.info("POST request to /api/v1/products/all");
-		return new ResponseEntity<List<Product>>(prodService.addProducts(products), HttpStatus.CREATED);
+		return new ResponseEntity<List<Product>>(prodService.addProducts(products, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{productId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Update a product", notes = "Only user with admin access can use this endpoint")
 	public ResponseEntity<Product> updateProduct(@RequestBody Product product,
-			@PathVariable("productId") long productId) {
+			@PathVariable("productId") long productId, Principal principal) {
 		logger.info("PUT request to /api/v1/products");
-		return new ResponseEntity<Product>(prodService.updateProduct(product, productId), HttpStatus.CREATED);
+		return new ResponseEntity<Product>(prodService.updateProduct(product, productId, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{productId}")

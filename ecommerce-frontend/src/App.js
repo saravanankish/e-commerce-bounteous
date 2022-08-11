@@ -12,6 +12,8 @@ import ViewCustomer from './page/ViewCustomer';
 import AddProduct from './page/AddProduct';
 import AddCustomer from './page/AddCustomer';
 import ProductsView from './page/ProductsView';
+import ViewBrand from './page/ViewBrand';
+import ViewCategory from './page/ViewCategory';
 
 function App() {
 
@@ -61,6 +63,8 @@ function App() {
                   </Route>
                   <Route path="customers" element={<ViewCustomer />} />
                   <Route path="products" element={<ProductsView />} />
+                  <Route path="brands" element={<ViewBrand />} />
+                  <Route path="category" element={<ViewCategory />} />
                 </Route>
             }
             {

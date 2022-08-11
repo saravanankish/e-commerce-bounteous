@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.service;
 
+import java.util.Date;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.saravanank.ecommerce.resourceserver.model.Cart;
 import com.saravanank.ecommerce.resourceserver.model.User;
 import com.saravanank.ecommerce.resourceserver.repository.UserRepository;
 
@@ -27,9 +27,12 @@ import com.saravanank.ecommerce.resourceserver.repository.UserRepository;
 public class UserService implements UserDetailsService {
 
 	private static final Logger logger = Logger.getLogger(UserService.class);
-	
+
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private CartService cartService;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -55,10 +58,11 @@ public class UserService implements UserDetailsService {
 
 	public User addUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		if (user.getRole().equals("CUSTOMER"))
-			user.setCart(new Cart());
+		user.setCreationTime(new Date());
+		user.setModifiedTime(new Date());
 		userRepo.save(user);
-		logger.info("Added user with userid=" + user.getUserId());
+		if (user.getRole().equals("CUSTOMER"))
+			cartService.addCartToUser(user);
 		logger.info("Added user with userid=" + user.getUserId());
 		return user;
 	}
@@ -76,37 +80,43 @@ public class UserService implements UserDetailsService {
 	public User getUserById(long id) {
 		Optional<User> user = userRepo.findById(id);
 		if (user.isEmpty()) {
-			logger.warn("User with userId=" + id + " not found");			
+			logger.warn("User with userId=" + id + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		logger.info("Returned user with userId=" + id);
 		return user.get();
 	}
 
-	public User updateUser(User user, long customerId) {
+	public User updateUser(User user, long customerId, String updatedBy) {
 		if (customerId == 0) {
-			logger.warn("Customer id is not present");						
+			logger.warn("Customer id is not present");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id should be present");
 		}
 		Optional<User> userData = userRepo.findById(customerId);
-		if (userData.isEmpty()) {			
-			logger.warn("User with userId=" + customerId + " not found");						
+		if (userData.isEmpty()) {
+			logger.warn("User with userId=" + customerId + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		User userInDb = userData.get();
-		if(user.getName() != null) userInDb.setName(user.getName());
-		if(user.getEmail() != null) userInDb.setEmail(user.getEmail());
-		if(user.getUsername() != null) userInDb.setUsername(user.getUsername());
-		if(user.getRole() != null) userInDb.setRole(user.getRole()); 
+		if (user.getName() != null)
+			userInDb.setName(user.getName());
+		if (user.getEmail() != null)
+			userInDb.setEmail(user.getEmail());
+		if (user.getUsername() != null)
+			userInDb.setUsername(user.getUsername());
+		if (user.getRole() != null)
+			userInDb.setRole(user.getRole());
+		userInDb.setModifiedTime(new Date());
+		if(!updatedBy.equals(userInDb.getUsername())) userInDb.setModifiedBy(userRepo.findByUsername(updatedBy));
 		userRepo.save(userInDb);
 		logger.info("Updated user with userId=" + customerId);
 		return userInDb;
 	}
-	
+
 	public void deleteUser(long id) {
 		Optional<User> user = userRepo.findById(id);
 		if (user.isEmpty()) {
-			logger.warn("User with userId=" + id + " not found");									
+			logger.warn("User with userId=" + id + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		User userData = user.get();
@@ -114,5 +124,5 @@ public class UserService implements UserDetailsService {
 		logger.info("Deleted user with userId=" + id);
 		userRepo.save(userData);
 	}
-	
+
 }

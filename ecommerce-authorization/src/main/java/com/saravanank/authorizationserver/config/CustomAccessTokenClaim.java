@@ -16,6 +16,7 @@ public class CustomAccessTokenClaim implements OAuth2TokenCustomizer<JwtEncoding
 	public void customize(JwtEncodingContext context) {
 		// TODO Auto-generated method stub
 		User user = userService.findByUsername(context.getPrincipal().getName());
+		System.out.println(user);
 		context.getClaims().claims(existingClaims -> {
 			existingClaims.put("role", user.getRole());
 		});

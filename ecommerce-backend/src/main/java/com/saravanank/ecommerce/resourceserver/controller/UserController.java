@@ -71,9 +71,9 @@ public class UserController {
 	@PutMapping("/{customerId}")
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_CUSTOMER')")
 	@ApiOperation(value = "Get customer by id", notes = "Only user with admin or support access can use this endpoint")
-	public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("customerId") long customerId) {
+	public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("customerId") long customerId, Principal principal) {
 		logger.info("GET request to /api/v1/user/" + customerId);
-		return new ResponseEntity<User>(userService.updateUser(user, customerId), HttpStatus.CREATED);
+		return new ResponseEntity<User>(userService.updateUser(user, customerId, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{userId}")

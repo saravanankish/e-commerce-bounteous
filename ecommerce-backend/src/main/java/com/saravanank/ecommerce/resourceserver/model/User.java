@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -8,8 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "users")
 public class User {
 
 	@Id
@@ -30,20 +33,19 @@ public class User {
 	private String password;
 	private String role;
 	private boolean accountActive = true;
+	private Date creationTime = new Date();
+	private Date modifiedTime = new Date();
 	
-	@OneToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "cart")
-	private Cart cart;
-
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+	private List<MobileNumber> mobileNumbers;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "modified_by")
+	private User modifiedBy;
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private List<Address> addresses;
-	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "delivery_address")
-	private Address deliveryAddress;
-	
-	@OneToMany(cascade =  CascadeType.ALL)
-	@JoinColumn(name = "user")
-	private List<Order> orders;
+
 }

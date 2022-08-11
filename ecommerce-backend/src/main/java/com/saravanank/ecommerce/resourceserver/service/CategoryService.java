@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,70 +11,86 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.saravanank.ecommerce.resourceserver.model.Category;
+import com.saravanank.ecommerce.resourceserver.model.User;
 import com.saravanank.ecommerce.resourceserver.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
-	
+
 	private static final Logger logger = Logger.getLogger(CategoryService.class);
 
 	@Autowired
 	private CategoryRepository categoryRepo;
-	
-	
-	public Category addSubCategory(Category subCat) {
+
+	@Autowired
+	private UserService userService;
+
+	public Category addSubCategory(Category subCat, String username) {
+		subCat.setCreationDate(new Date(new java.util.Date().getTime()));
+		subCat.setModifiedDate(new Date(new java.util.Date().getTime()));
+		subCat.setModifiedBy(userService.getUserByUsername(username));
 		categoryRepo.saveAndFlush(subCat);
 		logger.info("Added category with category_id=" + subCat.getId());
 		return subCat;
 	}
-	
-	public List<Category> addSubCategories(List<Category> subCategories) {
+
+	public List<Category> addSubCategories(List<Category> subCategories, String username) {
+		User modifiedBy = userService.getUserByUsername(username);
+		subCategories.stream().forEach(category -> {
+			category.setModifiedBy(modifiedBy);
+			category.setCreationDate(new Date(new java.util.Date().getTime()));
+			category.setModifiedDate(new Date(new java.util.Date().getTime()));
+		});
 		logger.info("Added " + subCategories.size() + " category(ies)");
 		return categoryRepo.saveAll(subCategories);
 	}
-	
+
 	public List<Category> getAllCategories() {
 		logger.info("Returned all categories");
 		return categoryRepo.findAll();
 	}
-	
+
 	public List<String> getAllSubCategories() {
 		logger.info("Returned all subCategories");
 		return categoryRepo.findAllSubcategories();
 	}
-	
-	public Category updateCategory(long categoryId, Category category) {
+
+	public Category updateCategory(long categoryId, Category category, String username) {
 		Optional<Category> categoryInDb = categoryRepo.findById(categoryId);
-		if(categoryInDb.isEmpty()) {
+		if (categoryInDb.isEmpty()) {
 			logger.warn("Category with id=" + categoryId + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
 		}
 		Category categoryData = categoryInDb.get();
-		if(category.getName() != null) categoryData.setName(category.getName());
-		if(category.getSubCategory() != null) categoryData.setSubCategory(category.getSubCategory());
+		if (category.getName() != null)
+			categoryData.setName(category.getName());
+		if (category.getSubCategory() != null)
+			categoryData.setSubCategory(category.getSubCategory());
+		categoryData.setModifiedDate( new Date(new java.util.Date().getTime()));
+		categoryData.setModifiedBy(userService.getUserByUsername(username));
 		categoryRepo.saveAndFlush(categoryData);
 		logger.info("Updated category with id=" + categoryId);
 		return categoryData;
 	}
-	
+
 	public void deleteCategroy(long categoryId) {
 		boolean categoryPresent = categoryRepo.existsById(categoryId);
-		if(!categoryPresent) {
+		if (!categoryPresent) {
 			logger.warn("Category with id=" + categoryId + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
 		}
 		logger.info("Deleted category with id=" + categoryId);
 		categoryRepo.deleteById(categoryId);
 	}
-	
+
 	public Category getCategoryById(long categoryId) {
 		Optional<Category> categoryInDb = categoryRepo.findById(categoryId);
-		if(categoryInDb.isEmpty()) {
+		if (categoryInDb.isEmpty()) {
 			logger.warn("Category with id=" + categoryId + " not found");
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
 		}
 		logger.info("Returned category with id=" + categoryId);
 		return categoryInDb.get();
 	}
-	
+
 }

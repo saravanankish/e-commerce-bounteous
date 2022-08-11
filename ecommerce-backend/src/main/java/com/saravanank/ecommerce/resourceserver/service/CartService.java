@@ -15,6 +15,7 @@ import com.saravanank.ecommerce.resourceserver.model.Cart;
 import com.saravanank.ecommerce.resourceserver.model.Product;
 import com.saravanank.ecommerce.resourceserver.model.ProductQuantityMapper;
 import com.saravanank.ecommerce.resourceserver.model.User;
+import com.saravanank.ecommerce.resourceserver.repository.CartRepository;
 import com.saravanank.ecommerce.resourceserver.repository.ProductRepository;
 import com.saravanank.ecommerce.resourceserver.repository.UserRepository;
 
@@ -25,6 +26,9 @@ public class CartService {
 
 	@Autowired
 	private UserRepository userRepo;
+	
+	@Autowired
+	private CartRepository cartRepo;
 
 	@Autowired
 	private ProductRepository productRepo;
@@ -36,7 +40,8 @@ public class CartService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
 		}
 		logger.warn("Returned cart of user with username=" + username);
-		return user.getCart();
+//		return user.getCart();
+		return null;
 	}
 
 	public Cart addProductsToCart(String username, ProductQuantityMapper product) {
@@ -50,7 +55,7 @@ public class CartService {
 			logger.warn("Product with product_id=" + product.getProductId() + " not found");			
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
 		}
-		Cart userCart = user.getCart();
+		Cart userCart =  null; //user.getCart();
 		if(userCart.getProducts() == null) {
 			userCart.setProducts(new ArrayList<ProductQuantityMapper>());
 		}
@@ -72,9 +77,21 @@ public class CartService {
 			userCart.getProducts().add(product);
 		}
 		logger.warn("Product added to user cart of user with username=" + username);
-		user.setCart(userCart);
+//		user.setCart(userCart);
 		userRepo.save(user);
-		return user.getCart();
+//		return user.getCart();
+		return null;
+	}
+	
+	public Cart addCartToUser(User user) {
+		if(user.getUserId() == 0) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User id not present");
+		}
+		logger.info("Added cart to user with id=" + user.getUserId());
+		Cart userCart = new Cart();
+		userCart.setUser(user);
+		cartRepo.save(userCart);
+		return userCart;
 	}
 	
 }

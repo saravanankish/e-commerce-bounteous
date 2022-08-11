@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/v1/brand")
 public class BrandController {
-	
+
 	private static final Logger logger = Logger.getLogger(BrandController.class);
 
 	@Autowired
@@ -33,19 +34,19 @@ public class BrandController {
 	@PostMapping
 	@ApiOperation(value = "Add a brand", notes = "Only user with admin access can use this endpoint")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<Brand> addBrand(@RequestBody Brand brand) {
+	public ResponseEntity<Brand> addBrand(@RequestBody Brand brand, Principal principal) {
 		logger.info("POST request to /api/v1/brand");
-		return new ResponseEntity<Brand>(brandService.addBrand(brand), HttpStatus.CREATED);
+		return new ResponseEntity<Brand>(brandService.addBrand(brand, principal.getName()), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/all")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Add many brand", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<List<Brand>> addBrands(@RequestBody List<Brand> brands) {
+	public ResponseEntity<List<Brand>> addBrands(@RequestBody List<Brand> brands, Principal principal) {
 		logger.info("POST request to /api/v1/brand/all");
-		return new ResponseEntity<List<Brand>>(brandService.addBrands(brands), HttpStatus.CREATED);
+		return new ResponseEntity<List<Brand>>(brandService.addBrands(brands, principal.getName()), HttpStatus.CREATED);
 	}
-	
+
 	@GetMapping("/{brandId}")
 	@ApiOperation(value = "Get brand by id", notes = "All users can use this endpoint")
 	public ResponseEntity<Brand> getBrandById(@PathVariable("brandId") long brandId) {
@@ -63,9 +64,11 @@ public class BrandController {
 	@PutMapping("/{brandId}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@ApiOperation(value = "Update a brand", notes = "Only user with admin access can use this endpoint")
-	public ResponseEntity<Brand> updateBrand(@PathVariable("brandId") long brandId, @RequestBody Brand brand) {
+	public ResponseEntity<Brand> updateBrand(@PathVariable("brandId") long brandId, @RequestBody Brand brand,
+			Principal principal) {
 		logger.info("PUT request to /api/v1/brand/" + brandId);
-		return new ResponseEntity<Brand>(brandService.updateBrand(brand, brandId), HttpStatus.CREATED);
+		return new ResponseEntity<Brand>(brandService.updateBrand(brand, brandId, principal.getName()),
+				HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{brandId}")

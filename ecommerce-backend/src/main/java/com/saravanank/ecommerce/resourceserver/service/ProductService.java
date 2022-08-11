@@ -1,5 +1,6 @@
 package com.saravanank.ecommerce.resourceserver.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.saravanank.ecommerce.resourceserver.model.Product;
 import com.saravanank.ecommerce.resourceserver.model.ProductResponseModel;
+import com.saravanank.ecommerce.resourceserver.model.User;
 import com.saravanank.ecommerce.resourceserver.repository.ProductRepository;
 
 @Service
@@ -23,19 +25,25 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepo;
 	
+	@Autowired
+	private UserService userService;
+	
 	public Product getProductById(long productId) {
 		Optional<Product> product = productRepo.findById(productId);
 		if(product.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
 		return product.get();
 	}
 	
-	public Product addProduct(Product product) {
+	public Product addProduct(Product product, String username) {
+		product.setModifiedDate(new Date());
+		product.setCreationDate(new Date());
+		product.setModifiedBy(userService.getUserByUsername(username));
 		productRepo.save(product);
 		logger.info("Added product with productId=" + product.getProductId());
 		return product;
 	}
 	
-	public Product updateProduct(Product product, long productId) {
+	public Product updateProduct(Product product, long productId, String username) {
 		Optional<Product> productInDb = productRepo.findById(productId);
 		if(productInDb.isEmpty()) {
 			logger.warn("Product with productId=" + productId + " not found");
@@ -51,12 +59,20 @@ public class ProductService {
 		if(product.getImages() != null) productData.setImages(product.getImages());
 		if(product.getBrand() != null) productData.setBrand(product.getBrand());
 		if(product.getCategory() != null) productData.setCategory(product.getCategory());
+		product.setModifiedDate(new Date(new java.util.Date().getTime()));
+		product.setModifiedBy(userService.getUserByUsername(username));
 		productRepo.save(productData);
 		logger.info("Updated product with productId=" + product.getProductId());
 		return productData;
 	}
 	
-	public List<Product> addProducts(List<Product> products) {
+	public List<Product> addProducts(List<Product> products, String username) {
+		User modifiedBy = userService.getUserByUsername(username);
+		products.stream().forEach(product -> {
+			product.setCreationDate(new Date(new java.util.Date().getTime()));
+			product.setModifiedDate(new Date(new java.util.Date().getTime()));
+			product.setModifiedBy(modifiedBy);
+		});
 		logger.info("Added " + products.size() + " product(s)");
 		return (List<Product>) this.productRepo.saveAll(products);
 	}
